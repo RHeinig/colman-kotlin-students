@@ -36,43 +36,33 @@ class EditStudentActivity : AppCompatActivity() {
         val initialAddress = student?.address ?: ""
         val initialChecked = student?.isChecked ?: false
 
-        id.setText(student?.id ?: "")
-        name.setText(student?.name ?: "")
-        phone.setText(student?.phone ?: "")
-        address.setText(student?.address ?: "")
-        isChecked.isChecked = student?.isChecked ?: false
+        id.setText(initialId)
+        name.setText(initialName)
+        phone.setText(initialPhone)
+        address.setText(initialAddress)
+        isChecked.isChecked = initialChecked
 
-        fun areFieldsValid(): Boolean {
-            return id.text.isNotBlank() &&
-                   name.text.isNotBlank() &&
-                   phone.text.isNotBlank() &&
-                   address.text.isNotBlank()
-        }
+        fun areFieldsValid() =
+            id.text.isNotBlank() &&
+                    name.text.isNotBlank() &&
+                    phone.text.isNotBlank() &&
+                    address.text.isNotBlank()
 
-        fun fieldsChanged(): Boolean {
-            return id.text.toString() != initialId ||
-                   name.text.toString() != initialName ||
-                   phone.text.toString() != initialPhone ||
-                   address.text.toString() != initialAddress ||
-                   isChecked.isChecked != initialChecked
-        }
+        fun fieldsChanged() =
+            id.text.toString() != initialId ||
+                    name.text.toString() != initialName ||
+                    phone.text.toString() != initialPhone ||
+                    address.text.toString() != initialAddress ||
+                    isChecked.isChecked != initialChecked
 
-        fun canSave(): Boolean {
-            return areFieldsValid() && fieldsChanged()
-        }
+        fun canSave() = areFieldsValid() && fieldsChanged()
 
         val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                // Not relevant
-            }
-
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 saveButton.isEnabled = canSave()
             }
-
-            override fun afterTextChanged(p0: Editable?) {
-                // Not relevant
-            }
+            override fun afterTextChanged(p0: Editable?) {}
         }
 
         id.addTextChangedListener(textWatcher)
@@ -104,12 +94,18 @@ class EditStudentActivity : AppCompatActivity() {
                 updatedPhone.isNotEmpty() &&
                 updatedAddress.isNotEmpty() &&
                 student != null) {
+
                 student.id = updatedId
                 student.name = updatedName
                 student.phone = updatedPhone
                 student.address = updatedAddress
                 student.isChecked = isChecked.isChecked
             }
+
+            val resultIntent = Intent().apply {
+                putExtra("updatedStudentId", updatedId)
+            }
+            setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
 
