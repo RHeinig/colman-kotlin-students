@@ -7,14 +7,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.colman.students.adapters.StudentAdapter
 import com.colman.students.models.Student
+import com.colman.students.repositories.StudentRepository
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class StudentListActivity : AppCompatActivity() {
     private lateinit var studentAdapter: StudentAdapter
-    private val students = mutableListOf(
-        Student("1", "John Doe", "123-456-7890", "123 Main St"),
-        Student("2", "Jane Smith", "987-654-3210", "456 Elm St"),
-        Student("3", "Bob Johnson", "555-555-5555", "789 Oak St")
-    )
+    private val students = StudentRepository.students
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +27,12 @@ class StudentListActivity : AppCompatActivity() {
             { student, isChecked -> toggleIsChecked(student, isChecked) }
         )
         recyclerView.adapter = studentAdapter
+
+        val addStudentButton: FloatingActionButton = findViewById(R.id.addStudentButton)
+        addStudentButton.setOnClickListener {
+            val intent = Intent(this, AddStudentActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun openStudentDetails(student: Student) {
@@ -43,5 +47,10 @@ class StudentListActivity : AppCompatActivity() {
 
     private fun toggleIsChecked(student: Student, isChecked: Boolean) {
         student.isChecked = isChecked
+    }
+
+    override fun onResume() {
+        super.onResume()
+        studentAdapter.notifyDataSetChanged()
     }
 }
