@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.colman.students.repositories.StudentRepository
 
 class StudentDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +40,24 @@ class StudentDetailsActivity : AppCompatActivity() {
             finish() // Close the activity and return to the previous one
         }
 
-        // TODO: Add edit button functionality
+        val editButton: Button = findViewById(R.id.student_edit_button)
+        editButton.setOnClickListener {
+            val intent = Intent(this, EditStudentActivity::class.java)
+            intent.putExtra("student_id", studentId)
+            startActivity(intent)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val studentId: String? = intent.getStringExtra("student_id")
+        val updatedStudent = StudentRepository.students.find { it.id == studentId }
+
+        findViewById<TextView>(R.id.student_id_text).text = updatedStudent?.id
+        findViewById<TextView>(R.id.student_name_text).text = updatedStudent?.name
+        findViewById<TextView>(R.id.student_phone_text).text = updatedStudent?.phone
+        findViewById<TextView>(R.id.student_address_text).text = updatedStudent?.address
+        findViewById<CheckBox>(R.id.student_checkbox).isChecked = updatedStudent?.isChecked ?: false
     }
 }
